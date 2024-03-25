@@ -48,16 +48,20 @@ suspend fun IPublicClientApplication.acquireTokenSilentSuspend(
             }
         }
 
-        val paramsWithCallback = AcquireTokenSilentParameters.Builder()
+        val builder = AcquireTokenSilentParameters.Builder()
             .fromAuthority(acquireTokenSilentParameters.authority)
             .forAccount(acquireTokenSilentParameters.account)
             .withScopes(acquireTokenSilentParameters.scopes)
             .forceRefresh(acquireTokenSilentParameters.forceRefresh)
             .withAuthenticationScheme(acquireTokenSilentParameters.authenticationScheme)
             .withClaims(acquireTokenSilentParameters.claimsRequest)
-            .withCorrelationId(UUID.fromString(acquireTokenSilentParameters.correlationId))
             .withCallback(callback)
-            .build()
+
+        if (acquireTokenSilentParameters.correlationId != null) {
+            builder.withCorrelationId(UUID.fromString(acquireTokenSilentParameters.correlationId))
+        }
+
+        val paramsWithCallback = builder.build()
 
         this.acquireTokenSilentAsync(paramsWithCallback)
     }
@@ -116,7 +120,6 @@ suspend fun IPublicClientApplication.acquireTokenSilentSuspend(
             .withScopes(scopes)
             .withAuthenticationScheme(authenticationScheme)
             .withClaims(claimsRequest)
-            .withCorrelationId(UUID.fromString(correlationId))
             .withCallback(callback)
 
         if (correlationId != null) {
@@ -161,7 +164,7 @@ suspend fun IPublicClientApplication.acquireTokenSuspend(
             }
         }
 
-        val paramsWithCallback = AcquireTokenParameters.Builder()
+        val builder = AcquireTokenParameters.Builder()
             .startAuthorizationFromActivity(acquireTokenParameters.activity)
             .withFragment(acquireTokenParameters.fragment)
             .withLoginHint(acquireTokenParameters.loginHint)
@@ -174,9 +177,13 @@ suspend fun IPublicClientApplication.acquireTokenSuspend(
             .withScopes(acquireTokenParameters.scopes)
             .withAuthenticationScheme(acquireTokenParameters.authenticationScheme)
             .withClaims(acquireTokenParameters.claimsRequest)
-            .withCorrelationId(UUID.fromString(acquireTokenParameters.correlationId))
             .withCallback(callback)
-            .build()
+
+        if (acquireTokenParameters.correlationId != null) {
+            builder.withCorrelationId(UUID.fromString(acquireTokenParameters.correlationId))
+        }
+
+        val paramsWithCallback = builder.build()
 
         this.acquireToken(paramsWithCallback)
     }
